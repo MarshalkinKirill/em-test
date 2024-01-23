@@ -1,0 +1,22 @@
+[Server]
+Host      = "localhost"
+Port      = 8077
+
+IsDevel   = true
+
+[Database]
+Addr            = "localhost:6543"
+User            = "postgres"
+Database        = "em_test_db"
+Password        = "qwe"
+PoolSize        = 5
+ApplicationName = "emsrv"
+
+[Sentry]
+DSN         = ""
+Environment = ""
+
+[OpenApi]
+AgeUrl          = "https://api.agify.io/?name="
+GenderUrl       = "https://api.genderize.io/?name="
+NationalityUtl  = "https://api.nationalize.io/?name="
