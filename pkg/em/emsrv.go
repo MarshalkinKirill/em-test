@@ -32,6 +32,7 @@ func (em EmService) getPersons(c context.Context, params FiltersParams) ([]db.Pe
 	var persons []db.Person
 	err := em.emRepo.GetPersons(&persons, params)
 	if err != nil {
+		em.Errorf("[EmService][getPerson] error log: %w", err)
 		return nil, err
 	}
 	return persons, nil
@@ -39,6 +40,7 @@ func (em EmService) getPersons(c context.Context, params FiltersParams) ([]db.Pe
 
 func (em EmService) createPerson(c context.Context, person *db.Person) error {
 	if err := em.isValid(c, person); err != nil {
+		em.Errorf("[EmService][createPerson] error log: %w", err)
 		return err
 	}
 	var emptyUUID uuid.UUID
@@ -47,6 +49,7 @@ func (em EmService) createPerson(c context.Context, person *db.Person) error {
 	}
 	err := em.emRepo.CreatePerson(person)
 	if err != nil {
+		em.Errorf("[EmService][createPerson] error log: %w", err)
 		return err
 	}
 	return nil
@@ -58,12 +61,14 @@ func (em EmService) updatePerson(c context.Context, person *db.UpdatePerson, id 
 	}
 	uuid, err := uuid.Parse(id)
 	if err != nil {
+		em.Errorf("[EmService][updatePerson] error log: %w", err)
 		return fmt.Errorf("[updatePerson] id parse failed: %w", err)
 	}
 	person.PersonID = uuid
 	//fmt.Printf("", person)
 	err = em.emRepo.UpdatePerson(person)
 	if err != nil {
+		em.Errorf("[EmService][updatePerson] error log: %w", err)
 		return err
 	}
 	return nil
@@ -73,10 +78,12 @@ func (em EmService) deletePerson(c context.Context, id string) error {
 	//var persons db.Person
 	uuid, err := uuid.Parse(id)
 	if err != nil {
+		em.Errorf("[EmService][deletePerson] error log: %w", err)
 		return fmt.Errorf("[deletePerson] id parse failed: %w", err)
 	}
 	err = em.emRepo.DeletePerson(uuid)
 	if err != nil {
+		em.Errorf("[EmService][deletePerson] error log: %w", err)
 		return err
 	}
 	return nil

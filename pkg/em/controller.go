@@ -55,7 +55,7 @@ func (em EmService) CreatePersonHandler(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request body"})
 	}
 
-	fmt.Printf("[CreatePersonHandler] name is: %s\n", person.Name)
+	em.Printf("[CreatePersonHandler] name is: %s\n", person.Name)
 	if age, err := em.GetRelevantAge(c, person.Name); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	} else {
@@ -115,10 +115,10 @@ func (em EmService) GetRelevantAge(c echo.Context, name string) (int, error) {
 		return 0, err
 	}
 	if age, ok := data["age"].(float64); ok != false {
-		fmt.Printf("[GetRelevantGender] age is: %d'\n", int(age))
+		em.Printf("[GetRelevantGender] age is: %d'\n", int(age))
 		return int(age), nil
 	} else {
-		fmt.Printf("[GetRelevantGender] age is: %d\n", int(age))
+		em.Printf("[GetRelevantGender] age is: %d\n", int(age))
 		return 0, nil
 	}
 }
@@ -130,17 +130,17 @@ func (em EmService) GetRelevantGender(c echo.Context, name string) (string, erro
 		return "", err
 	}
 	if gender, ok := data["gender"].(string); ok != false {
-		fmt.Printf("[GetRelevantGender] gender is: %s\n", gender)
+		em.Printf("[GetRelevantGender] gender is: %s\n", gender)
 		return gender, nil
 	} else {
-		fmt.Printf("[GetRelevantGender] gender is: %s\n", gender)
+		em.Printf("[GetRelevantGender] gender is: %s\n", gender)
 		return "", nil
 	}
 }
 
 func (em EmService) GetRelevantNationality(c echo.Context, name string) (string, error) {
 	url := fmt.Sprintf("%s%s", em.cfg.NationalityUtl, name)
-	fmt.Printf("%s", url)
+	//fmt.Printf("%s", url)
 	data, err := em.Call(url)
 	if err != nil {
 		return "", err
@@ -165,7 +165,7 @@ func (em EmService) GetRelevantNationality(c echo.Context, name string) (string,
 				}
 			}
 		}
-		fmt.Printf("[GetRelevantNationality] relevant country is: %s\n", CountryID)
+		em.Printf("[GetRelevantNationality] relevant country is: %s\n", CountryID)
 		return CountryID, nil
 	} else {
 		return "", nil
@@ -175,21 +175,21 @@ func (em EmService) GetRelevantNationality(c echo.Context, name string) (string,
 func (em EmService) Call(url string) (map[string]interface{}, error) {
 	response, err := http.Get(url)
 	if err != nil {
-		fmt.Printf("[GetRelevantAge] http request failed: %w\n", err)
+		em.Errorf("[GetRelevantAge] http request failed: %w\n", err)
 		return nil, fmt.Errorf("[GetRelevantAge] http request failed: %w\n", err)
 	}
 	defer response.Body.Close()
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		fmt.Printf("[GetRelevantAge] request body read failed: %w\n", err)
+		em.Errorf("[GetRelevantAge] request body read failed: %w\n", err)
 		return nil, fmt.Errorf("[GetRelevantAge] request body read failed: %w\n", err)
 	}
 
 	var data map[string]interface{}
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		fmt.Printf("[GetRelevantAge] unmurshal body failed: %w\n", err)
+		em.Errorf("[GetRelevantAge] unmurshal body failed: %w\n", err)
 		return nil, fmt.Errorf("[GetRelevantAge] unmurshal body failed: %w\n", err)
 	}
 	return data, nil
